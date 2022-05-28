@@ -1,0 +1,534 @@
+=> In last session we discussed JpaRepository
+
+	-> Pagination
+	-> Sorting
+	-> QueryByExamle
+
+	findAll(Pageble page)
+	findAll(Sort sort)
+	findAll(Example example)
+
+---------------------------------------------------------------------------------------------
+Today's session : findByXXX ( ) methods
+--------------------------------------------------------------------------------------------
+
+-> findByXXX ( ) methods are used to construct the query based on method name in the repository
+
+-> We need to write findByXXX ( ) method using entity class property name (variable)
+
+Note: Method name is very important here because based on method name only jpa will construct the query and it will execute that query
+
+----------------------------------------------------------------------------------------------
+@Entity
+@Table(name = "BOOK_INFO")
+public class Book {
+
+	@Id
+	@Column(name = "BOOK_ID")
+	private Integer bookId;
+
+	@Column(name = "BOOK_NAME")
+	private String bookName;
+
+	@Column(name = "BOOK_PRICE")
+	private Double bookPrice;
+}
+-----------------------------------------------------------------------------------------------
+
+//Retrieve  the books whose bookName is equal to "Spring"
+	findByBookName(String name);
+//it will generate query as => select * from book_info where book_name=:name
+
+---------------------------------------------------------------------------------------------
+
+//Retrieve the books where book_price = 400.00
+	findByBookPrice(Double price);
+//it will generate query as => select * from book_info where book_price=:price
+
+---------------------------------------------------------------------------------------------
+
+//Retrieve Books where book_name = 'Spring' and book_price = 500.00
+	findByBookNameAndBookPrice(String name, Double price);
+
+//it will generate query as
+	=> select * from book_info where book_name=:name and book_price=:price
+
+-----------------------------------------------------------------------------------------------
+
+//Retrieve the books where book_price >= 450.00
+
+findByBookPriceGreaterThanEqual(Double price)
+
+//it will generate query as => select * from book_info where book_price >= :price
+
+----------------------------------------------------------------------------------------------
+
+public interface BookRepository extends JpaRepository<Book, Integer> {
+
+	public List<Book> findByBookPrice(Double price);
+	
+	public List<Book> findByBookNameAndBookPrice(String name, Double price);
+	
+	public List<Book> findByBookPriceGreaterThanEqual(Double price);
+
+}
+--------------------------------------------------------------------------------------------
+
+Note: findByXXX ( ) methods are applicable only for SELECT queries. We can't use findByXXX ( ) methods for INSERT/UPDATE/DELETE operations.
+
+-----------------------------------------------------------------------------------------------
+Custom Queries in Data JPA
+-----------------------------------------------------------------------------------------------
+
+-> Custom Query means we can write the query and we can ask data jpa to execute our query
+
+-> We can write custom queries in 2 ways
+
+		1) Native SQL (plain sql queries)
+
+		2) HQL (Hibernate Query Language)
+
+--------------------------------------------------------------------------------------------
+-> In Native SQL queries will use table names and columns directley in the query
+
+-> Native SQL queries are database dependent
+
+-> One DB sql syntax may not supported by other DB hence SQL queries are DB dependent
+
+-> If we want to change our application from one DB to another DB then we have to change queries and we have to re-test entire application (lot of time and money required)
+
+				 executes
+			SQL ------------------> Database
+
+-----------------------------------------------------------------------------------------------
+-> To overcome the problems of Native SQL, hibernate introduced its own query language that is called as HQL
+
+-> HQL stands for Hibernate Query Language
+
+-> HQL queries are database in-dependent queries
+
+-> HQL queries will be converted to SQL queries using Dialect class before execution
+
+-> If we want to change our application from one DB to another DB then we no need to change any HQL query because they are DB independent queries. We need to change only Dialect class.
+
+-> For every database Hibernate having Dialect class
+
+-> Hibernate supports more than 30 dialect classes
+															   				 execute
+	HQL -----------> Dialect Class ---------> SQL ------------> Database
+
+-> In HQL queries we will use Entity Class Name and Entity Class Property Names
+
+-----------------------------------------------------------------------------------------------
+@Entity
+@Table(name = "BOOK_INFO")
+public class Book {
+
+	@Id
+	@Column(name = "BOOK_ID")
+	private Integer bookId;
+
+	@Column(name = "BOOK_NAME")
+	private String bookName;
+
+	@Column(name = "BOOK_PRICE")
+	private Double bookPrice;
+
+}
+-----------------------------------------------------------------------------------------------
+//retrieve all records from table
+
+SQL : SELECT * FROM BOOK_INFO
+HQL : FROM Book
+
+//retrieve book whose book id is 105
+SQL : SELECT * FROM BOOK_INFO WHERE BOOK_ID=105
+HQL : FROM Book where bookId=105
+
+//retrieve books whose name is 'Spring' and price is 450.00
+SQL : SELECT * FROM BOOK_INFO WHERE BOOK_NAME='Spring' and BOOK_PRICE=450.00
+HQL : FROM Book WHERE bookName='Spring' and bookPrice=450.00
+
+//retrieve book_name and book_price using book_id
+SQL : SELECT BOOK_NAME, BOOK_PRICE FROM BOOK_INFO WHERE BOOK_ID=101
+HQL : SELECT bookName, bookPrice from Book where bookId = 101
+
+----------------------------------------------------------------------------------------------
+
+-> To execute custom queries we will use @Query annotation
+
+-----------------------------------------------------------------------------------------------
+public interface BookRepository extends JpaRepository<Book, Integer> {
+
+	@Query("from Book")
+	public List<Book> getAllBooks();
+
+	@Query(value = "select * from book_info", nativeQuery = true)
+	public List<Book> getAllBooksNative();
+
+}
+-----------------------------------------------------------------------------------------------
+
+
+-> Performance wise SQL queries are good because they will execute with Database directley where as HQL queries needs to be converted into SQL before execution.
+
+-> Maintenence wise HQL queries are good because these are Database independent
+
+-----------------------------------------------------------------------------------------------
+
+Note: Based on datasource properties we configure data jpa detecting which Dialect class it has to load.
+
+-----------------------------------------------------------------------------------------------
+Timestamping in Data JPA
+---------------------------------------------------------------------------------------------
+-> When we insert or update a record it is highly recommended to track the date & time of our insert/update operation
+
+-> In every table it is highly recommended to maintain below two columns
+
+			CREATED_DATE
+			UPDATED_DATE
+
+-> CREATED_DATE column will represent when that record got inserted into table
+
+-> UPDATED_DATE	column will represent when that record got updated in the table
+
+-> CREATED_DATE & UPDATED_DATE columns we can use for analysis purporse and for report generation purpose
+
+Ex: Generate excel report with the records created in last week
+    Get the records which are updated in last month
+
+
+-> In Hibernate we have TimeStamping concept to insert created_date & updated_date column values
+
+			@CreationTimestamp
+			@UpdateTimestamp
+
+--------------------------------------------------------------------------------------------
+
+@Entity
+@Table(name = "STUDENT_INFO")
+public class Student {
+
+	@Id
+	@Column(name = "student_id")
+	private Integer sid;
+
+	@Column(name = "student_name")
+	private String sname;
+
+	@Column(name = "student_rank")
+	private Integer srank;
+
+	@Column(name = "created_date", updatable = false)
+	@CreationTimestamp
+	private LocalDateTime createdDate;
+
+	@Column(name = "updated_date", insertable = false)
+	@UpdateTimestamp
+	private LocalDateTime updatedDate;
+
+	//setters & getters
+	//toString ( )
+}
+
+--------------------------------------------------------------------------------------------
+
+-> updatable=false means ignore this column when update query getting generated
+
+-> insertable=false means ignore this column when insert query getting generated
+
+----------------------------------------------------------------------------------------------
+Generators
+--------------------------------------------------------------------------------------
+
+-> Generators are used to generate the value for primary key columns in the database
+
+-> Primary key is a constraint which is equal to below 2 constraints
+
+			1) UNQUE
+			2) NOT NULL
+
+		PRIMARY KEY = UNIQUE + NOT NULL
+
+-> To represent primary key mapped variable we will use @Id annotation
+
+-> When we develop application we should not ask end user to enter value for primary key because end users may enter duplicate value thats why we will use Generators to generate primary key column values with in the application
+
+-> To apply generator for Primary Key column variable we will use @GeneratedValue annotation
+
+-----------------------------------------------------------------------------------------------
+
+	@Id
+	@GeneratedValue
+	@Column(name = "student_id")
+	private Integer sid;
+
+
+-> When we insert record into table, sid value will be generated through @GeneratedValue annotation
+
+
+Note: If we use oracle database then it will use hibernate_sequence by default to get primary key column value (select hibernate_sequence.nextval from dual)
+
+Note: hibernate_sequence is the default sequence created by hibernate in oracle database.
+
+
+Note: In realtime we don't use default sequece. We will write custom sequence for primary key columns.
+
+
+Note: MySQL Database will not support for sequences. MySQL DB will use Auto Increment to generate the value for Primary key Columns.
+
+----------------------------------------------------------------------------------------------
+Working with Custom Sequence
+---------------------------------------------------------------------------------------------
+
+-> It is not recommended to use default sequence (hibernate_sequence) for all tables.
+
+Book_ID		EMP_ID		PRODUCT_ID		USER_ID
+1		 2		  3			  4
+5		 6		  7			  8
+11		 9		  12			  10
+
+Note : If our tables contains primary keys like that people thinks that few records got deleted. There is no readability.
+
+-> To avoid this problem, we will create Custom Sequences to Generate Primary Key Column values
+
+-> Every Primary Key column value should have its own sequence
+
+
+Syntax to create custom sequence
+--------------------------------
+CREATE SEQUENCE STUDENT_ID_SEQ
+START WITH 1
+INCREMENT BY 1;
+
+Syntax to get value from sequence
+---------------------------------
+select STUDENT_ID_SEQ.nextval from dual;
+
+
+Configuring Custom Sequence in Entity Class
+-------------------------------------------
+	@Id
+	@SequenceGenerator(name="sid_seq", sequenceName="STUDENT_ID_SEQ", allocationSize=1)
+	@GeneratedValue(generator="sid_seq")
+	@Column(name = "student_id")
+	private Integer sid;
+
+---------------------------------------------------------------------------------------------
+Custom Generators
+----------------------------------------------------------------------------------------------
+
+-> As of now we have seen primary key column values are generating in number format
+
+	Ex : 1, 2, 3, 4, 5 etc..
+
+-> Sometimes we may get requirement to generate Primary key column values in alpha numeric format
+
+	Ex : AIT1, AIT2, AIT3, AIT4, AIT5.....
+             OD1, OD2, OD3, OD4, OD5, OD6 .....
+	     IBM1, IBM2, IBM3, IBM4 ....
+
+-> If we want to generate primary key column values like above then we have to create Our Own Generator that is called as Custom Generator.
+
+-> Customer Generator Session Video : https://youtu.be/IijGVtT9ZPk
+
+-----------------------------------------------------------------------------------------------
+Composite Primary Key
+----------------------------------------------------------------------------------------------
+-> If a table contains more than one primary key column then we will call it as Composite Primary key
+
+-> Composite key is used to identify unique record in the table with all primary keys
+
+-> When we are using composite primary keys, individual column uniqueness is not guaranteed but combination of primary keys uniqueness is guarnteed
+
+
+Syntax To Create Table with Composite Primary Keys
+--------------------------------------------------
+CREATE TABLE SAMPLE_TABLE(
+COL1 integer,
+COL2 varchar(30),
+COL3 varchar(50),
+PRIMARY KEY (COL1, COL2)
+);
+
+
+Working with Composite Primary Keys
+-----------------------------------
+
+-> To work with Composite Primary Keys we will use below 2 annotations
+
+@Embeddable
+@EmbeddedId
+
+-> We will create 2 classes. 1 class for primary key columns mapped variables with @Embeddable annoation. Another class for non-primary column mapped variables with @Entity annotation. In the entity we will take Embeddable class as a property
+
+-----------------------------------------------------------------------------------------------@Data
+@Embeddable
+public class AccountPK implements Serializable {
+
+	private Integer accId;
+	private String accType;
+	private String holderName;
+}
+----------------------------------------------------------------------------------------------
+@Data
+@Entity
+@Table(name = "BANK_ACCOUNTS")
+public class Account {
+
+	@Column(name = "BRANCH_NAME")
+	private String branchName;
+
+	@Column(name = "MIN_BAL")
+	private Double minBal;
+
+	@EmbeddedId
+	private AccountPK accPk;
+
+}
+-----------------------------------------------------------------------------------------------
+public interface AccountRepository extends JpaRepository<Account, AccountPK> {
+
+}
+-----------------------------------------------------------------------------------------------
+@Service
+public class AccountService {
+
+	private AccountRepository accRepo;
+
+	public AccountService(AccountRepository accRepo) {
+		this.accRepo = accRepo;
+	}
+
+	public void getDataUsingPK() {
+
+		AccountPK pk = new AccountPK();
+		pk.setAccId(101);
+		pk.setAccType("CURRENT");
+		pk.setHolderName("IBM");
+
+		Optional<Account> findById = accRepo.findById(pk);
+		if (findById.isPresent()) {
+			System.out.println(findById.get());
+		}
+	}
+
+	public void saveAccData() {
+
+		AccountPK pk = new AccountPK();
+		pk.setAccId(204);
+		pk.setAccType("SAVINGS");
+		pk.setHolderName("TCS");
+
+		Account acc = new Account();
+		acc.setBranchName("Ameerpet");
+		acc.setMinBal(5000.00);
+		acc.setAccPk(pk); // setting pk class obj to entity obj
+
+		accRepo.save(acc);
+	}
+}
+-----------------------------------------------------------------------------------------------
+@SpringBootApplication
+public class Application {
+
+	public static void main(String[] args) {
+		ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
+		AccountService accountService = context.getBean(AccountService.class);
+		accountService.saveAccData();
+		//accountService.getDataUsingPK();
+		context.close();
+	}
+}
+-----------------------------------------------------------------------------------------------
+Note: We can't use generators for Composite Primary Key Column mapped variables
+----------------------------------------------------------------------------------------------
+
+             
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

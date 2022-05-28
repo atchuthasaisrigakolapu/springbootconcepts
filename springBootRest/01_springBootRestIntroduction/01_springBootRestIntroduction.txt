@@ -1,0 +1,132 @@
+RESTFul Services 
+=================
+1) Spring Web MVC
+2) XML & JAX-B api ( xml <--------> java obj)
+3) JSON & JACKSON api ( json <--------> java obj)
+4) HTTP Protocol
+	- Http Request Structure
+	- Http Response Structure
+	- Http Status Codes & Status Msgs
+5) REST Introduction
+6) REST Principles
+7) REST Architecture ( Resource & Client )
+8) REST Resource Development
+9) Consumes & Produces
+10) Dealing with Media Types
+11) Http Msg Converters
+12) Exception Handling
+13) Swagger Documentation
+14) PostMan
+15) REST Client Introduction
+26) RestTemplate Vs WebClient
+27) Reactive Programming
+28) Mono Vs Flux Objects
+29) Layered Architecture Application
+30) Actuators
+31) Profiles
+32) Embedded Database (h2)
+33) Logging
+34) Spring Security
+35) Unit Testing (Junit + Mockito)
+
+
+Microservices
+=============
+1) Monolith Architecture
+2) Pros & Cons Of Monolith
+3) Microservices Introduction
+4) Pros & Cons of Microservices
+5) Microservices Architecture
+6) Service Registry (Eureka)
+7) API Gateway (zuul)
+8) Inter Service Communication (FeignClient)
+9) Client Side Load Balancing (Ribbon)
+10) Admin Server & Client
+11) Distributed Logging ( Sleuth & Zipkin )
+12) Saaga Design Pattern
+13) Circuit Breaker Design Pattern
+14) Spring Boot with Kafka Integration
+15) Spring Boot with Redis Integration
+16) Spring Boot with Angular Integration
+17) Docker
+18) AWS Deployment
+19) JWT
+20) OAuth 2.0
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Syllabus of Spring Boot & Microservices
+--------------------------------------
+Spring Core Basics
+Spring Boot
+Spring Data JPA
+
+Web MVC
+RestFul Services
+Microservices
+
+RESTFul Services & Microservices
+--------------------------------
+Web MVC
+RestFul Services
+Microservices
+
+
+
+Duration : 2 Months
+Timings : 6:00 AM - 7:15 AM (IST) - (Mon-Sat)
+Fee : 4000 INR (Live Classes + Notes)
+Fee : 7000 INR (Live Classes + Notes + videos - 6 Months)
+----------------------------------------------------------------------------------------------
+
+What is Spring Web MVC ?
+++++++++++++++++++++++++
+
+-> Spring Web MVC is one module available in spring framework
+
+-> Using Web MVC Module we can develop 2 types of applications
+
+		1) Web Application
+		2) Distributed Application
+
+
+-> The application which we can access from the browser is called as Web application
+
+	Ex : Gmail, facebook, irctc etc...
+
+-> Web Applications are used for Customer to Business Communication ( C 2 B)
+
+		User -----------------> Web app
+
+
+-> The application which is communicating with other applications are called as Distributed Application
+
+-> Distibuted Applications are used for Business To Business Communication
+
+
+		Passport App <-------> AADHAR App
+	
+		Yatra App <-------------> IRCTC App
+
+		GPay <----------------> Banking app
+
+		Swiggy <---------------> Banking App
+
+
+-----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

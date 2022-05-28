@@ -1,0 +1,207 @@
+=> In last session we discussed JpaRepository
+
+	-> Pagination
+	-> Sorting
+	-> QueryByExamle
+
+	findAll(Pageble page)
+	findAll(Sort sort)
+	findAll(Example example)
+
+---------------------------------------------------------------------------------------------
+Today's session : findByXXX ( ) methods
+--------------------------------------------------------------------------------------------
+
+-> findByXXX ( ) methods are used to construct the query based on method name in the repository
+
+-> We need to write findByXXX ( ) method using entity class property name (variable)
+
+Note: Method name is very important here because based on method name only jpa will construct the query and it will execute that query
+
+----------------------------------------------------------------------------------------------
+@Entity
+@Table(name = "BOOK_INFO")
+public class Book {
+
+	@Id
+	@Column(name = "BOOK_ID")
+	private Integer bookId;
+
+	@Column(name = "BOOK_NAME")
+	private String bookName;
+
+	@Column(name = "BOOK_PRICE")
+	private Double bookPrice;
+}
+-----------------------------------------------------------------------------------------------
+
+//Retrieve  the books whose bookName is equal to "Spring"
+	findByBookName(String name);
+//it will generate query as => select * from book_info where book_name=:name
+
+---------------------------------------------------------------------------------------------
+
+//Retrieve the books where book_price = 400.00
+	findByBookPrice(Double price);
+//it will generate query as => select * from book_info where book_price=:price
+
+---------------------------------------------------------------------------------------------
+
+//Retrieve Books where book_name = 'Spring' and book_price = 500.00
+	findByBookNameAndBookPrice(String name, Double price);
+
+//it will generate query as
+	=> select * from book_info where book_name=:name and book_price=:price
+
+-----------------------------------------------------------------------------------------------
+
+//Retrieve the books where book_price >= 450.00
+
+findByBookPriceGreaterThanEqual(Double price)
+
+//it will generate query as => select * from book_info where book_price >= :price
+
+----------------------------------------------------------------------------------------------
+
+public interface BookRepository extends JpaRepository<Book, Integer> {
+
+	public List<Book> findByBookPrice(Double price);
+	
+	public List<Book> findByBookNameAndBookPrice(String name, Double price);
+	
+	public List<Book> findByBookPriceGreaterThanEqual(Double price);
+
+}
+--------------------------------------------------------------------------------------------
+
+Note: findByXXX ( ) methods are applicable only for SELECT queries. We can't use findByXXX ( ) methods for INSERT/UPDATE/DELETE operations.
+
+-----------------------------------------------------------------------------------------------
+Custom Queries in Data JPA
+-----------------------------------------------------------------------------------------------
+
+-> Custom Query means we can write the query and we can ask data jpa to execute our query
+
+-> We can write custom queries in 2 ways
+
+		1) Native SQL (plain sql queries)
+
+		2) HQL (Hibernate Query Language)
+
+--------------------------------------------------------------------------------------------
+-> In Native SQL queries will use table names and columns directley in the query
+
+-> Native SQL queries are database dependent
+
+-> One DB sql syntax may not supported by other DB hence SQL queries are DB dependent
+
+-> If we want to change our application from one DB to another DB then we have to change queries and we have to re-test entire application (lot of time and money required)
+
+				 executes
+			SQL ------------------> Database
+
+-----------------------------------------------------------------------------------------------
+-> To overcome the problems of Native SQL, hibernate introduced its own query language that is called as HQL
+
+-> HQL stands for Hibernate Query Language
+
+-> HQL queries are database in-dependent queries
+
+-> HQL queries will be converted to SQL queries using Dialect class before execution
+
+-> If we want to change our application from one DB to another DB then we no need to change any HQL query because they are DB independent queries. We need to change only Dialect class.
+
+-> For every database Hibernate having Dialect class
+
+-> Hibernate supports more than 30 dialect classes
+															   				 execute
+	HQL -----------> Dialect Class ---------> SQL ------------> Database
+
+-> In HQL queries we will use Entity Class Name and Entity Class Property Names
+
+-----------------------------------------------------------------------------------------------
+@Entity
+@Table(name = "BOOK_INFO")
+public class Book {
+
+	@Id
+	@Column(name = "BOOK_ID")
+	private Integer bookId;
+
+	@Column(name = "BOOK_NAME")
+	private String bookName;
+
+	@Column(name = "BOOK_PRICE")
+	private Double bookPrice;
+
+}
+-----------------------------------------------------------------------------------------------
+//retrieve all records from table
+
+SQL : SELECT * FROM BOOK_INFO
+HQL : FROM Book
+
+//retrieve book whose book id is 105
+SQL : SELECT * FROM BOOK_INFO WHERE BOOK_ID=105
+HQL : FROM Book where bookId=105
+
+//retrieve books whose name is 'Spring' and price is 450.00
+SQL : SELECT * FROM BOOK_INFO WHERE BOOK_NAME='Spring' and BOOK_PRICE=450.00
+HQL : FROM Book WHERE bookName='Spring' and bookPrice=450.00
+
+//retrieve book_name and book_price using book_id
+SQL : SELECT BOOK_NAME, BOOK_PRICE FROM BOOK_INFO WHERE BOOK_ID=101
+HQL : SELECT bookName, bookPrice from Book where bookId = 101
+
+----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

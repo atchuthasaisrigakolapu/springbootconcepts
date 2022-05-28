@@ -1,0 +1,146 @@
+jax-b api (to work with xml data in java applications)
+
+jackson api (to work with json data in java applications)
+
+--------------------------------------------------------------
+HTTP Protocol
+--------------------------------------------------------------
+
+-> Hyper Text Transfer Protocol
+
+-> Http acts as a mediator between client & server
+
+						      HTTP 
+			client  <----------------------> server
+
+-> Client will send Http Request to server
+
+-> Server will process the request and will send Http Response to client
+
+-> Http is stateless protocol
+
+-> Stateless means it can't remember the conversation happend between Client & Server
+
+
+HTTP Methods
+-------------
+
+GET : It is used to get response from the server
+
+POST : It is used to send data to server (creation purpose)
+
+PUT : It is used to update record at server
+
+DELETE : It is used to delete the record at server
+
+Note: When we are developing rest api methods, we have to bind our methods to HTTP protocol methods based on method logic.
+
+-> Every REST API method should be binded to Http Protocol Method (It is mandatory)
+
+GET ---> @GetMapping
+POST ---> @PostMapping
+PUT ---> @PutMapping
+DELETE ---> @DeleteMapping
+
+
+
+Client will send request to server with below details
+------------------------------------------------------
+Request Header (It contains meta data)
+Request Body (It contains payload (business data)
+
+Server will send response to client with below details
+------------------------------------------------------
+Response Header (It contains meta data)
+Response Body (It contains payload (business data))
+
+
+
+HTTP Status Codes
+------------------
+Note: Response Header will contains HTTP Status Code
+
+-> Http Status Code will represent how that request got processed
+
+1xx  - INFORMATIONAL
+
+2xx  - OK (Success)
+
+3xx  - Redirectional (www.sunmicrosystem.com -> www.oracle.com)
+
+4xx  - Client Error
+
+5xx  - Server Error
+
+
+Note: Http Status Codes will play very important in distributed applications development
+
+-------------------------------------------------------------------------------------------------
+Note: POST, PUT and DELETE Methods having request body. GET method don't have request body.
+
+-> Request Body is used to send data to server
+
+-> GET request is meant for getting data from server. It is not for sending that's why no Body for GET Request
+
+
+Note: In GET request we can send data to server in URL using Query Params & Path Params
+
+		Ex: www.ashokitech.com/course?name=sbms  (Query Param)
+
+		Ex : www.ashokitech.com/comurse/sbms	(Path Param)
+
+-------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

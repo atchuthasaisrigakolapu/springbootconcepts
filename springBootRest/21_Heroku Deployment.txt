@@ -1,0 +1,698 @@
+In Last session we developed FIRST REST API using Spring Boot
+----------------------------------------------------------------
+
+@RestController
+@GetMapping
+ResponseEntity
+
+-> @RestController annotation is used to represent our class as distributed component
+
+				@Controller + @ResponseBody = @RestController
+
+Note: @RestController class methods will return response directley
+
+			(text / xml / json)
+
+Note: No concept of returning "view file names" in RestController
+
+
+-> @GetMapping annotation is used to bind RestController method to HTTP GET Req.
+
+			Ex: @GetMapping("/")
+
+-> ResponseEntity class is used to construct response to client
+
+				new ResponseEntity<>(body, httpstatus);
+
+-------------------------------------------------------------------------------------
+
+-> HTTP GET request is used to get data from server
+-> HTTP GET request will not have body
+-> To send data to server in GET request we will use below 2 options
+
+			1) QueryParams
+			2) PathParams
+
+
+Query Params
+------------
+-> Query Params represents data in key value format
+
+-> Query Params should present only at end of the URL
+
+-> Query Params will start with '?'
+
+-> If we want to send more than one query param in URL then they should be seperated by using '&'
+
+		Ex: www.ashokitech.com/course?name=sbms&trainer=ashok
+
+-> To read query parameters we will use @RequestParam("key") annotation
+
+----------------------------------------------------------------------------------
+@RestController
+public class RailRestController{
+
+	@GetMapping("/ticket")
+	public ResponseEntity<String> getTicketStatus(@RequestParam("pnr") String pnr){
+		//logic to get status from db
+
+		return new ResponseEntity<>(tktStatus, HttpStatus.OK);
+	}
+}
+
+			URL : http://localhost:9090/ticket?pnr=HHLL43
+
+------------------------------------------------------------------------------------
+Note: In JAX-RS api we have @QueryParam annotation to deal with Query Params.
+Now a days we are not using JAX-RS directley to develop REST APIs because our Spring MVC having support to develop REST APIs
+------------------------------------------------------------------------------------
+
+Path Parameters
+----------------
+-> Path Parameters also used to send data to server in URL
+
+-> Path Parameters will represent data directley in URL (No keys)
+
+-> Path Parameters can present anywhere in the URL
+
+-> To send multiple path parameters we will use '/' as sepeator
+
+Note: Path Parameters should be represented in URL Pattern (mandatory)
+
+			Ex-1 : /ticket/{pnr}
+			Ex-2 : www.ashokitech.com/{course}/info
+
+			Ex-3 : www.ashoitech.com/course/sbms/ashok/info
+					("/course/{name}/{trainer}/info)
+
+-> To read Path Params from URL, we will use @PathVariable annotation
+
+------------------------------------------------------------------------------------
+@RestController
+public class RailRestController{
+
+	@GetMapping("/ticket/{pnr}/info")
+	public ResponseEntity<String> getTicketStatus(@PathVariable("pnr") String pnr){
+		//logic to get status from db
+		return new ResponseEntity<>(tktStatus, HttpStatus.OK);
+	}
+}
+
+	URL : http://localhost:9090/ticket/JH7890/info
+-------------------------------------------------------------------------------------
+-> In Web applications we will use QueryParams to send data to server in URL
+
+-> In Distributed applications we will use Path Params to send data to server in URL
+
+-------------------------------------------------------------------------------------
+Dealing with XML and JSON data in GET Request For Produces
+-------------------------------------------------------------------------------------
+
+-> XML represents data in tags format
+
+-> JSON represents data in key-value format
+
+-> XML & JSON both are intereoperable
+
+Note: Now a days JSON is widely using in distributed applications
+
+
+Note: In Spring Boot, we no need to write JAX-B and Jackson logics directley because Spring Boot will take care of that. 
+
+Note: Spring Boot internally uses HttpMessageConverters to deal with XML and JSON 
+
+
+
+1) Create Spring starter application with below dependencies
+
+		a) spring-boot-starter-web
+		b) devtools (optional)
+
+
+2) Create Binding class to represent response data  (Ticket.java)
+
+
+@Data
+@XmlRootElement
+public class Ticket {
+
+	private Integer ticketId;
+	private String from;
+	private String to;
+	private Double price;
+	private String jdate;
+	private Integer trainNum;
+
+}
+
+3) Create RestController with method to return ticket data  (it shud support both xml & json response)
+
+
+@RestController
+public class TicketRestController {
+
+	@GetMapping(
+		value = "/ticket/{ticketId}", 
+		produces = { "application/xml", "application/json" }
+	)
+	public ResponseEntity<Ticket> getTicket(@PathVariable Integer ticketId) {
+
+		Ticket ticket = new Ticket();
+		ticket.setTicketId(ticketId);
+		ticket.setFrom("Hyd");
+		ticket.setTo("Chennai");
+		ticket.setPrice(867.00);
+		ticket.setTrainNum(6782);
+
+		return new ResponseEntity<>(ticket, HttpStatus.OK);
+	}
+}
+
+4) Configure server.port in application.properties file (if required)
+
+5) Run the application and test it using Postman
+
+
+
+Note-1 : In @GetMapping annotation, "produces" attribute represents in which formats our REST API method can provide response to clients
+
+Note-2 : Client will send request with "Accept" header.
+
+				Ex :  Accept = "application/json"
+
+-> Based on "Accept" header REST API will send response to client in that format. Internally "HTTP Msg Converters" will be used to convert the object data into client understandable format.
+
+
+
+Q) Do we need to write the logic of JAX-B and JACKSON in REST Controller to convert data into xml or json ?
+
+Ans) As a programmer we no need to that because REST API will use Message Converters internally to those conversions. Because conversions are unviersal requirement hence Spring Web MVC providing that logic for everybody.
+
+-------------------------------------------------------------------------------------------
+
+produces & Accept
+
+=> "produces" attribute represents in which formats REST API method can provide response
+
+=> "Accept" header represents in which format client expecting response from REST API
+
+-------------------------------------------------------------------------------------------
+Dealing with XML & JSON data in request body
+-------------------------------------------------------------------------------------------
+
+-> Client application can send data to REST API in 2 ways
+
+			1) In URL
+			2) In Request Body
+
+-> To send data in URL we will use Query Params & Path Params. Data will be displayed in URL so not recommended to send sensitive data.
+
+-> To send sensitive data and huge amount of data clients will use Request Body
+
+=> "consumes" represents in which formats REST API method can take input data
+
+=> "Content-Type" header represents in which format client sending data in Request Body.
+
+Note: Based on Content-Type header value, Message Converter will use JAX-B or JACKSON api internally to convert raw data into Object format
+
+	Content-Type = application/json ==> Jackson api will be used to read json data from body
+	Content-Type = application/xml ==> JAX-B api will be used to read xml data from body
+
+--------------------------------------------------------------------------------------------
+
+@Data
+@XmlRootElement
+public class Passenger {
+
+	private String name;
+	private String email;
+	private String from;
+	private String to;
+	private Long trainNumber;
+}
+
+---------------------------------------------------------------------------------------------
+
+@RestController
+public class TicketRestController {
+
+	@PostMapping(
+			value = "/ticket",
+			consumes = {"application/json", "application/xml"}
+	)
+	public ResponseEntity<String> bookTicket(@RequestBody Passenger passenger) {
+		System.out.println(passenger);
+		//logic to book ticket
+		return new ResponseEntity<>("Ticket Booked", HttpStatus.CREATED);
+	}
+}
+---------------------------------------------------------------------------------------------
+
+{
+	"name": "Raju",
+	"email" : "raju@yahoo.com",
+	"from" : "Hyd",
+	"to": "Pune",
+	"trainNumber" : 1234
+}
+
+---------------------------------------------------------------------------------------------
+
+produces
+Accept
+
+consumes
+Content-Type
+
+-> "produces" represents REST API method supporting output formats
+-> "consumes" represents REST API method supporting input formats
+
+-> "Content-Type" header represents client sending data format in request body
+-> "Accept" header represents client expecting data format in response body
+
+--------------------------------------------------------------------------------------------
+
+
+Note: We can use "consumes" and "produces" in single REST API method. That means REST API method will take some input from client and it will provide some response to client.
+
+
+@PostMapping(
+	value = "/ticket",
+	consumes = {"application/xml", "application/json"},
+	produces = {"application/xml", "application/json"}
+) 
+public ResponseEntity<Ticket> bookTicket (@RequestBody Passenger passenger){
+
+			//logic to bookticket
+		
+		return new ResponseEntity<>(ticketObj, HttpStatus.CREATED);
+}
+
+---------------------------------------------------------------------------------------------
+
+-> Client will send request to above method using both headers "Accept" and "Content-Type"
+
+---------------------------------------------------------------------------------------------
+
+Requirement : Develop REST API for IRCTC to book train ticket for passengers and send ticket details to passenger
+
+---------------------------------------------------------------------------------------------
+
+Note: To develop any REST API first we need to identify input data structure and output data structure for REST API
+
+Rest API input-data
+--------------------
+Passenger Data : name, email, phno, from, to, jdate, trainNum
+
+REST API output-data
+---------------------
+Ticket Data : ticketNum, jdate, ticketPrice, ticketStatus, from, to, name, trainNum
+
+Note: Based on input & output data structure we need to create binding classes
+
+-> Input data will be represented using Request Binding class
+
+-> Output data will be represented using Response Binding class
+
+
+Steps to develop the project
+-----------------------------
+
+1) Create Spring Boot application with dependencies
+
+			a) web starter
+			b) devtools
+
+2) Create Request Binding class 
+
+3) Create Response Binding class
+
+4) Create Service interface and implementation
+
+5) Create Rest Controller method to handle request & response
+
+6) Run the application and test it
+
+-------------------------------------------------------------------------------------------
+@Data
+public class Passenger {
+
+	private String name;
+	private String email;
+	private String from;
+	private String to;
+	private String jdate;
+	private Long trainNum;
+
+}
+-------------------------------------------------------------------------------------------
+@Data
+public class Ticket {
+
+	private String name;
+	private String from;
+	private String to;
+	private String jdate;
+	private Long trainNum;
+	private String ticketNum;
+	private String ticketStatus;
+	private Double ticketPrice;
+}
+---------------------------------------------------------------------------------------------
+public interface TicketService {
+
+	public Ticket bookTicket(Passenger passenger);
+	
+	public Ticket getTicket(String ticketNum);
+
+}
+---------------------------------------------------------------------------------------------
+package in.ashokit.service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
+import in.ashokit.request.Passenger;
+import in.ashokit.response.Ticket;
+
+@Service
+public class TicketServiceImpl implements TicketService {
+
+	private Map<String, Ticket> ticketsMap = new HashMap<>();
+
+	@Override
+	public Ticket bookTicket(Passenger passenger) {
+
+		// logic to book the ticket
+
+		// generating random ticket id
+		String ticketNum = UUID.randomUUID().toString().replace("-", "");
+
+		Ticket tinfo = new Ticket();
+		tinfo.setTicketNum(ticketNum);
+		tinfo.setTicketStatus("CONFIRMED");
+		tinfo.setTicketPrice(450.00);
+		tinfo.setFrom(passenger.getFrom());
+		tinfo.setTo(passenger.getTo());
+		tinfo.setName(passenger.getName());
+		tinfo.setJdate(passenger.getJdate());
+		tinfo.setTrainNum(passenger.getTrainNum());
+
+		ticketsMap.put(ticketNum, tinfo);
+
+		return tinfo;
+	}
+
+	@Override
+	public Ticket getTicket(String ticketNum) {
+		if (ticketsMap.containsKey(ticketNum)) {
+			return ticketsMap.get(ticketNum);
+		}
+		return null;
+	}
+}
+--------------------------------------------------------------------------------------------
+package in.ashokit.rest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import in.ashokit.request.Passenger;
+import in.ashokit.response.Ticket;
+import in.ashokit.service.TicketService;
+
+@RestController
+public class TicketRestController {
+
+	@Autowired
+	private TicketService service;
+
+	@PostMapping(
+			value = "/ticket",
+			consumes = {"application/json"},
+			produces = {"application/json"}
+	)
+	public ResponseEntity<Ticket> bookTicket(@RequestBody Passenger passenger) {
+		Ticket ticket = service.bookTicket(passenger);
+		return new ResponseEntity<>(ticket, HttpStatus.CREATED);
+	}
+	
+	@GetMapping(
+			value = "/ticket/{ticketNum}",
+			produces = {"application/json"}
+	)
+	public ResponseEntity<Ticket> getTicket(@PathVariable("ticketNum") String ticketNum){
+		Ticket ticket = service.getTicket(ticketNum);
+		return new ResponseEntity<>(ticket, HttpStatus.OK);
+	}
+
+}
+---------------------------------------------------------------------------------------------
+{
+	"name": "Raju",
+	"email" : "raju@yahoo.com",
+	"from" : "Hyd",
+	"to": "Pune",
+	"trainNum" : 1234,
+	"jdate" : "05-May-2022"
+}
+----------------------------------------------------------------------------------------------------
+
+=> We have completed IRCTC REST API development & Testing (using Postman)
+
+----------------------------------------------------------------------------------------------------
+
+-> MakeMyTrip Application & Yatra Application wants to access IRCTC REST API
+
+-> To access IRCTC API, they should develop Client logic to make REST Call to IRCTC API
+
+-> To develop Client logic, we should know api details
+     
+	1) URL Endpoint of API
+	2) HTTP Method 
+	3) Input Data Structure
+	4) Output Data Structure
+
+
+Note: API Development team should provide API details to Client Side Development Team.
+
+ (Producer app development team should provide documentation to Consumer app development team)
+
+General Example : When we purchase a mobile or TV we will get User Manaual
+				 (User Manual contains how to use that product)
+
+-> In Realtime, Producer Application Development team will provide documentation to Client Side Development in 2 ways
+
+			1) Swagger
+
+			2) PDF document
+
+-> Client side development team should read the API documentation and should understand API details. Based on the documentation client side development team should develop client logic.
+
+------------------------------------------------------------------------------------------------------
+Swagger
+------------------------------------------------------------------------------------------------------
+
+-> Swagger is a third party api
+
+-> Swagger is used to generate documentation for REST API
+
+-> Swagger UI is available to test REST API
+
+-> Swagger UI provides beautiful User interface to test REST api
+
+-> To use swagger in our project, we should add below dependencies
+
+
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger2</artifactId>
+    <version>2.8.0</version>
+</dependency>
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger-ui</artifactId>
+    <version>2.8.0</version>
+</dependency>
+
+-> After adding dependency, we need to create SwaggerConfig class. In this class we will specify for which classes it has to generate documentation.
+
+--------------------------------------------------------------------------------------------------------
+@Configuration
+@EnableSwagger2
+public class SwaggerConfig {
+	
+	@Bean
+	public Docket apiDoc() {
+		
+		return new Docket(DocumentationType.SWAGGER_2)
+				   .select()
+				   .apis(RequestHandlerSelectors.basePackage("in.ashokit.rest"))
+				   .paths(PathSelectors.any())
+				   .build();
+	}
+}
+-------------------------------------------------------------------------------------------------------
+
+Swagger URLS
+--------------
+
+For Json documentation : http://localhost:8080/v2/api-docs
+
+For Swagger UI : http://localhost:8080/swagger-ui.html
+
+--------------------------------------------------------------------------------------------------------
+Heroku Cloud Deployment
+------------------------------------------------------------------------------------------------------
+
+-> We have developed REST API and it is running in local machine
+
+-> If we want everybody to access our REST API then we should host our application in Cloud
+
+-> Heroku is one of the Cloud Platform provided by Salesforce company
+
+-> Heroku cloud is giving platform as a service (PaaS)
+
+-> PaaS means we need to provide our source code then Cloud Provider will give the Platform to run our code (Platform means environment)
+
+-> Heroku cloud is free to host our applications
+
+-> In Heroku cloud we can deploy upto 5 applications
+
+-> We can deploy application into heorku in 2 ways
+
+			1) Heroku CLI
+	
+			2) From Git Hub Repository
+
+------------------------------------------------------------------------------------------------------
+Steps to deploy our application in heroku cloud
+------------------------------------------------------------------------------------------------------
+
+1) Develop one REST API and keep it ready (which we want to deploy)
+
+2) Download and Install Git client software
+
+		URL : https://git-scm.com/downloads
+
+3) Right Click on Mouse and open Git Bash 
+
+4) Once Git Bash is opened then introduce yourself to git (execute below commands)
+
+		$ git config --global user.name "your-name"
+		$ git config --global user.email "your-email"
+
+5) Create account in Heroku Cloud Platform
+
+		URL : https://dashboard.heroku.com/
+
+6) Download and install Heroku CLI software
+
+	URL : https://devcenter.heroku.com/articles/heroku-cli#install-the-heroku-cli
+
+7) Login into heroku and create the application in Heroku Cloud Platform
+
+			App_Name : ashokit-app-irctc (Name should be unique)
+
+8) After application created, go to 'Deploy' section in our application and choose 'Deployment' method
+
+			1) We can deploy using Heroku CLI
+			2) We can deploy using Git Hub Repository
+
+
+***************Note: Here i am using Heroku CLI approach to deploy my application***************
+
+
+9) Execute the commands which are displaying under 'Heroku CLI' deployment method
+
+
+Note: Open cmd from your project root folder and execute below commands
+
+$ heroku login
+
+$ heroku git:clone -a <your-heroku-app-name>
+
+$ git add .
+
+$ git commit -am "make it better"
+
+$ git push heroku master
+
+
+10) Once the commands executed successfully, click on 'Open App' (it will open your application url)
+
+			URL : https://ashokit-app-irctc.herokuapp.com/swagger-ui.html/
+
+-----------------------------------------------------------------------------------------------------
+
+-> When we push our code to Heroku, it is identifying our code is developed by using which language and it is preparing environment based on that to run our application. 
+Hence it is called as Platform As A Service (PaaS)
+
+-------------------------------------------------------------------------------------------------------
+Note: If your application using database then we have to create database also in cloud platform
+
+Note: H2 database we can use for practise purpose
+-------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

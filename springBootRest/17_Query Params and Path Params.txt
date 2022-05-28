@@ -1,0 +1,175 @@
+In Last session we developed FIRST REST API using Spring Boot
+----------------------------------------------------------------
+
+@RestController
+@GetMapping
+ResponseEntity
+
+-> @RestController annotation is used to represent our class as distributed component
+
+				@Controller + @ResponseBody = @RestController
+
+Note: @RestController class methods will return response directley
+
+			(text / xml / json)
+
+Note: No concept of returning "view file names" in RestController
+
+
+-> @GetMapping annotation is used to bind RestController method to HTTP GET Req.
+
+			Ex: @GetMapping("/")
+
+-> ResponseEntity class is used to construct response to client
+
+				new ResponseEntity<>(body, httpstatus);
+
+-------------------------------------------------------------------------------------
+
+-> HTTP GET request is used to get data from server
+-> HTTP GET request will not have body
+-> To send data to server in GET request we will use below 2 options
+
+			1) QueryParams
+			2) PathParams
+
+
+Query Params
+------------
+-> Query Params represents data in key value format
+
+-> Query Params should present only at end of the URL
+
+-> Query Params will start with '?'
+
+-> If we want to send more than one query param in URL then they should be seperated by using '&'
+
+		Ex: www.ashokitech.com/course?name=sbms&trainer=ashok
+
+-> To read query parameters we will use @RequestParam("key") annotation
+
+----------------------------------------------------------------------------------
+@RestController
+public class RailRestController{
+
+	@GetMapping("/ticket")
+	public ResponseEntity<String> getTicketStatus(@RequestParam("pnr") String pnr){
+		//logic to get status from db
+
+		return new ResponseEntity<>(tktStatus, HttpStatus.OK);
+	}
+}
+
+			URL : http://localhost:9090/ticket?pnr=HHLL43
+
+------------------------------------------------------------------------------------
+Note: In JAX-RS api we have @QueryParam annotation to deal with Query Params.
+Now a days we are not using JAX-RS directley to develop REST APIs because our Spring MVC having support to develop REST APIs
+------------------------------------------------------------------------------------
+
+Path Parameters
+----------------
+-> Path Parameters also used to send data to server in URL
+
+-> Path Parameters will represent data directley in URL (No keys)
+
+-> Path Parameters can present anywhere in the URL
+
+-> To send multiple path parameters we will use '/' as sepeator
+
+Note: Path Parameters should be represented in URL Pattern (mandatory)
+
+			Ex-1 : /ticket/{pnr}
+			Ex-2 : www.ashokitech.com/{course}/info
+
+			Ex-3 : www.ashoitech.com/course/sbms/ashok/info
+					("/course/{name}/{trainer}/info)
+
+-> To read Path Params from URL, we will use @PathVariable annotation
+
+------------------------------------------------------------------------------------
+@RestController
+public class RailRestController{
+
+	@GetMapping("/ticket/{pnr}/info")
+	public ResponseEntity<String> getTicketStatus(@PathVariable("pnr") String pnr){
+		//logic to get status from db
+		return new ResponseEntity<>(tktStatus, HttpStatus.OK);
+	}
+}
+
+	URL : http://localhost:9090/ticket/JH7890/info
+-------------------------------------------------------------------------------------
+-> In Web applications we will use QueryParams to send data to server in URL
+
+-> In Distributed applications we will use Path Params to send data to server in URL
+
+-------------------------------------------------------------------------------------
+Dealing with XML and JSON data in GET Request
+-------------------------------------------------------------------------------------
+
+-> XML represents data in tags format
+
+-> JSON represents data in key-value format
+
+-> XML & JSON both are intereoperable
+
+Note: Now a days JSON is widely using in distributed applications
+
+
+Note: In Spring Boot, we no need to write JAX-B and Jackson logics directley because Spring Boot will take care of that. 
+
+Note: Spring Boot internally uses HttpMessageConverters to deal with XML and JSON 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

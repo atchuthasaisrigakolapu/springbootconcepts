@@ -1,0 +1,135 @@
+RestFul Services & Microservices
++++++++++++++++++++++++++++++++++
+
+1) What are RESTFul Services ?
++++++++++++++++++++++++++++++++
+-> RESTFul Services are used to develop "Distributed Applications" with "Intereoperability"
+
+-> If one application is communicating with another application then we will call it as distributed application
+
+		Passport <----------> AADHAR App
+
+		MakeMyTrip <--------> IRCTC App
+
+-> Intereoperability means irrespective of the platform and language if applications are communicating then we will call them as Intereoperable applications.
+
+		Java App <---------> .Net App
+		.Net App <----------> Python
+		Python App <--------> PHP
+
+
+2) Why we should develop Distributed application?
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-> Distributed applications are used for Business to Business Communication ( B 2 B )
+-> We can resue the functionality of one project in another project
+
+Ex:
+---
+-> IRCTC project contains logic to book train tickets
+-> MakeMyTrip application will communicate with IRCTC to book train ticket
+
+Note: In this scenario, MakeMyTrip application is re-using IRCTC application logic	
+
+
+-----------------------------------------------------------------------------------------------
+-> In Distributed Application 2 actors will be involved
+
+1) Provider or Resource
+2) Consumer or Client
+
+-> The application which is providing business services to other appilcations is called as Provider
+
+-> The application which is consuming business services from other applications is called as Consumer.
+
+				    HTTP
+		Provider App < --------------- > Consumer App
+
+
+-> Provider app and Consumer app will communicate using HTTP as Mediator
+
+-> In B2B communications, Consumer application will send request to Provider application with some data. Provider application will process that data and will send reponse to consumer.
+
+-> Consumer application and provider application can exchange the data in multiple formats
+
+
+				  txt/xml/json
+		Consumer App <--------------------> Provider App
+
+-----------------------------------------------------------------------------------------------
+
+Q) What is Microservice?
++++++++++++++++++++++++++
+-> It is not a technology
+-> It is not a framework
+-> It is not an API
+
+-> Microservices is an architectural design pattern to develop the applications.
+
+-> In Microservies architecture we will divide project functionality into small small REST APIs
+
+
+----------------------------------------------------------------------------------------------
+-> XML & JAX-B
+	- Java Object to XML
+	- XML to Java Object
+
+-> JSON & JACKSON
+	- Java Object to JSON
+	- JSON to Java Object
+
+-> HTTP Protocol
+	- HTTP Request
+	- HTTP Response
+	- HTTP Methods
+	- HTTP Status Codes & messages
+
+-> REST API
+	- Provider
+	- Consumer
+
+----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

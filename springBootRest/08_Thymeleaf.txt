@@ -1,0 +1,383 @@
+Today's session : Thymleaf
+--------------------------------------------------------------------------------------------
+
+-> We used JSP as a presentation technology in our spring web mvc based applications
+
+-> JSP can't be executed in browser directley
+
+-> When the request comes to JSP then internally JSP will be converted to Servlet and that servlet will send response to browser
+
+-> When we use JSP for presentation then burden will be increased on server because every JSP should be converted into Servlet to produce the response.
+
+---------------------------------------------------------------------------------------------
+
+-> To overcome problems of JSP we can use Thymeleaf as a presentation technology
+
+-> Thymleaf is a template engine that can be used in HTML pages directley
+
+-> HTML pages can be executed in browser directley (performance will be fast when compared with jsps)
+
+-> In general, HTML pages are used for static data. If we use thymleaf in HTML then we can add dynamic nature to HTML pages.
+
+---------------------------------------------------------------------------------------------
+
+-> We can develop spring boot application with thymleaf as a presentation technology
+
+-> To use Thymleaf in spring boot we have a starter
+
+		spring-boot-starter-thymleaf
+
+----------------------------------------------------------------------------------------------
+Procedure to develop spring boot application with thymeleaf
+---------------------------------------------------------------------------------------------
+
+1) Create Spring Starter Project with below dependencies
+
+		a) web-starter
+		b) thymeleaf-starter
+		c) devtools
+
+2) Create Controller with required methods
+
+3) Create Theymeleaf templates in src/main/resources/templates folder (file extension .html)
+
+4) Configure Embedded Server Port number in application.properties file
+
+5) Run the application and test it
+
+Note: No need to configure view resolver because Spring Boot will detect theymeleaf template files and will process them
+-----------------------------------------------------------------------------------------------
+<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+---------------------------------------------------------------------------------------------
+@Controller
+public class WelcomeController {
+
+	@GetMapping("/welcome")
+	public String welcomeMsg(@RequestParam("name") String name, Model model) {
+		String msgTxt = name + ", Welcome to Ashok IT..!!";
+		model.addAttribute("msg", msgTxt);
+		return "index";
+	}
+}
+-----------------------------------------------------------------------------------------------
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<p th:text=${msg} />
+
+</body>
+</html>
+----------------------------------------------------------------------------------------------
+server.port=9090
+--------------------------------------------------------------------------------------------
+
+Spring Boot + Thymeleaf (Form Based Application)
+----------------------------------------------------------------------------------------------
+
+
+1) create a spring starter project with below dependencies
+
+	a) web-starter
+	b) thymeleaf-starter
+	c) lombok
+	d) devtools
+
+2) Create Form Binding Class 
+
+@Data
+public class Product {
+	
+	private Integer pid;
+	private String pname;
+	private Double price;
+
+}
+
+3) Create Controller
+
+@Controller
+public class ProductController {
+	
+	@GetMapping("/product")
+	public ModelAndView loadForm() {
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("product", new Product());
+		mav.setViewName("productView");
+		return mav;
+	}
+	
+	@PostMapping("/product")
+	public ModelAndView handleSubmitBtn(Product product) {
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("successView");
+		return mav;
+	}
+}
+
+
+4) Develop view file display form (productView.html)
+
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<form th:action="@{/product}" th:object="${product}" method="POST">
+		<table>
+			<tr>
+				<td>Product Id:</td>
+				<td><input type="text" th:field="*{pid}" /></td>
+			</tr>
+			<tr>
+				<td>Product Name:</td>
+				<td><input type="text" th:field="*{pname}" /></td>
+			</tr>
+			<tr>
+				<td>Product Price:</td>
+				<td><input type="text" th:field="*{price}" /></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td><input type="submit" value="Save" /></td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
+
+
+5) Develop view file to display success message ( successView.html )
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1> Product Record Saved Successfully</h1>
+	<a href="product">Go Back</a>
+</body>
+</html>
+
+6) Configure the port number and run the application.
+
+
+============================================================================================
+-----------------------------------------------------------------------------------------------
+Spring Boot + Thymeleaf + Form validations - Example
+-----------------------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.6.2</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>in.ashokit</groupId>
+	<artifactId>25-SB-Web-MVC-Form-Validations</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>25-SB-Web-MVC-Form-Validations</name>
+	<description>Demo project for Spring Boot</description>
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+-----------------------------------------------------------------------------------------------
+package in.ashokit.binding;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+public class Person {
+
+	@NotNull
+	@Size(min = 3, max = 8)
+	private String name;
+	
+	@NotNull
+	@Min(18)
+	private Integer age;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
+	@Override
+	public String toString() {
+		return "Person [name=" + name + ", age=" + age + "]";
+	}
+
+}
+-----------------------------------------------------------------------------------------------
+package in.ashokit.controller;
+
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import in.ashokit.binding.Person;
+
+@Controller
+public class PersonController {
+
+	@GetMapping("/person")
+	public String displayForm(Model model) {
+		Person personObj = new Person();
+		model.addAttribute("person", personObj);
+		return "index";
+	}
+
+	@PostMapping("/savePerson")
+	public String savePerson(@Valid Person person, BindingResult result, Model model) {
+		System.out.println(person);
+
+		if (result.hasErrors()) {
+			return "index";
+		}
+
+		model.addAttribute("msg", person.getName() + " record saved successfully");
+		return "data";
+	}
+
+}
+-----------------------------------------------------------------------------------------------
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<form th:action="@{/savePerson}" th:object="${person}" method="POST">
+		<table>
+			<tr>
+				<td>Name :</td>
+				<td><input type="text" th:field="*{name}" /></td>
+				<td th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name
+					Error</td>
+			</tr>
+			<tr>
+				<td>Age :</td>
+				<td><input type="text" th:field="*{age}" /></td>
+				<td th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age
+					Error</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><input type="submit" value="Save" /></td>
+			</tr>
+		</table>
+	</form>
+
+</body>
+</html>
+-----------------------------------------------------------------------------------------------<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<p th:text="${msg}" />
+	
+	<a href="person">Go Back</a>
+	
+</body>
+</html>
+----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+

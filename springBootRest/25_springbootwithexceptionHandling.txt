@@ -1,0 +1,192 @@
+Exception Handling 
+++++++++++++++++++
+
+-> Exception means an unexpected and unwanted situation occuring the program execution is called as Exception
+
+-> When exception occurs programs will be terminated abnormally (stops in the middle)
+
+-> As a developer we need to handle that exception and terminate the program gracefully
+
+-> To handle exceptions in the java program we have below 5 key words
+
+
+1) try
+2) catch
+3) throw
+4) throws
+5) final
+
+-> The risky code we will keep in try block
+
+-> catch block is used to handle exception 
+
+	(when exception occured in try block, execution control comes to catch block)
+
+-> throw keyword is used to re-throw the exception
+
+-> throws keyword is used to ignore the exception
+
+-> final block is used to write clean up activities (closing files, closing connections etc)
+
+
+Combinations of keywords
+++++++++++++++++++++++++
+
+try with catch
+
+try with catch & final
+
+try with final
+
+
+Note: When we write try block then catch or final at least one block is mandatory. We can write both also (catch & final with try)
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Exception Handling in REST API
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-> In REST API we can handle exceptions in 2 ways
+
+	1) Controller Based Handling
+
+	2) Global Exception Handling
+
+-> Controller Based Handling means writing Exception Handler methods in controller class. That exception handler works only for that controller class exception.
+
+-> To handle exceptions of any class in the project then we will go for Global Exception Handling
+
+-> To implement Global Exception Handling we will use '@RestControllerAdvice' annotation
+
+-> To bind handle method to exception we will use '@ExceptionHandler' annotation
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+package in.ashokit.exception;
+
+@Data
+public class ApiError {
+
+	private String msg;
+	private String code;
+
+}
+--------------------------------------------------------------------------------------------------------
+
+package in.ashokit.exception;
+
+public class NoCustomerFoundException extends RuntimeException {
+
+	public NoCustomerFoundException() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public NoCustomerFoundException(String msg) {
+		super(msg);
+	}
+
+}
+
+-------------------------------------------------------------------------------------------------------
+package in.ashokit.exception;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+	@ExceptionHandler(value = { ArithmeticException.class })
+	public ResponseEntity<ApiError> handleArithematicException(ArithmeticException ae) {
+
+		String expMsg = ae.getMessage();
+		String expCode = "Exp101";
+
+		ApiError error = new ApiError();
+		error.setMsg(expMsg);
+		error.setCode(expCode);
+
+		return new ResponseEntity<ApiError>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	@ExceptionHandler(value = { NoCustomerFoundException.class })
+	public ResponseEntity<ApiError> handleNoCustomerFoundException(NoCustomerFoundException ncfe) {
+
+		String expMsg = ncfe.getMessage();
+		String expCode = "EXP0024";
+
+		ApiError error = new ApiError();
+		error.setMsg(expMsg);
+		error.setCode(expCode);
+
+		return new ResponseEntity<ApiError>(error, HttpStatus.BAD_REQUEST);
+	}
+}
+------------------------------------------------------------------------------------------------------
+package in.ashokit.rest;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class CalculatorRestController {
+
+	@GetMapping("/div")
+	public String div() {
+
+		Integer a = 100;
+		Integer b = 0;
+		Integer result = 0;
+
+		result = a / b;
+
+		return "Result :: " + result;
+	}
+
+}
+------------------------------------------------------------------------------------------------------
+
+package in.ashokit.rest;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import in.ashokit.exception.NoCustomerFoundException;
+
+@RestController
+public class CustomerRestController {
+
+	@GetMapping("/customer/{cid}")
+	public ResponseEntity<String> getCustomerEmail(@PathVariable("cid") Integer customerId) {
+
+		String email = "";
+
+		if (customerId == 100) {
+			email = "ashokitschool@gmail.com";
+		} else {
+			throw new NoCustomerFoundException("Invalid Customer Id");
+		}
+
+		return new ResponseEntity<String>(email, HttpStatus.OK);
+
+	}
+}
+
+-------------------------------------------------------------------------------------------------------
+
+Exception Handling Play list : https://www.youtube.com/watch?v=F_8MLQ9PFdg&list=PLpLBSl8eY8jQZD6gOxRlULf1ukdGq1xhl
+
+----------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+

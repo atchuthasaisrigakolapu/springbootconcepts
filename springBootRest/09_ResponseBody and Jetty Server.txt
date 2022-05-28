@@ -1,0 +1,84 @@
+=> We can send data from controller to ui using Model object also
+
+=> Model is an interface which represents data in the form of key-value
+
+-> We can write Controller using 'Model' interface like below to send data from Controller to UI.
+
+-----------------------------------------------------------------------------------------------
+
+	@GetMapping("/greet")
+	public String displayGreetMsg(Model model) {
+		model.addAttribute("msg", "Hi, Good Morning....!!");
+		return "greetView"; //logical view name
+	}
+
+----------------------------------------------------------------------------------------------
+
+-> When controller method returns String value, DispatcherServlet will consider 
+that as logical view name.
+
+-> By using @ResonseBody annotation we can send response to user directley without view files
+
+
+@Controller
+public class DateController {
+
+	@GetMapping("/date")
+	@ResponseBody
+	public String display() {
+		LocalDate date = LocalDate.now();
+		String msg = "Today's Date Is : " + date;
+		return msg;
+	}
+}
+--------------------------------------------------------------------------------------------
+
+Note : @Controller + @ResponseBody  = @RestController
+
+--------------------------------------------------------------------------------------------
+Embedded Servers In Spring Boot
+-----------------------------------------------------------------------------------------------
+
+-> To develop web or rest applications using spring boot we are using below starter
+
+	'spring-boot-starter-web'
+
+-> When we add this dependency, it is giving 'Apache Tomcat' as default embedded server
+
+-> We can change default Embedded Container from Tomcat to Jetty Like below
+
+		a) Exclude tomcat dependency from web-starter
+		b) Add jetty dependency like below
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jetty</artifactId>
+		</dependency>
+----------------------------------------------------------------------------------------------
+
+Top 50 Spring MVC Interview Questions & Answers
+
+Read : https://ashokitech.com/interview-questions/top-50-spring-web-mvc-interview-questions-answers
+
+Videos : https://www.youtube.com/watch?v=1_SsosC4Cs8&list=PLpLBSl8eY8jSMr1hJLB096nq8W0ABQoXH
+
+--------------------------------------------------------------------------------------------
+
+
+
+
+
+
+

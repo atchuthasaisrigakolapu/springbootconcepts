@@ -1,0 +1,115 @@
+GET : https://vur3ednzag.execute-api.ap-south-1.amazonaws.com/prod/pets/1
+
+Output
++++++++
+
+{
+    "id": 1,
+    "type": "dog",
+    "price": 249.99
+}
+
+GET : https://vur3ednzag.execute-api.ap-south-1.amazonaws.com/prod/pets/
+
+Output
++++++++
+
+[
+    {
+        "id": 1,
+        "type": "dog",
+        "price": 249.99
+    },
+    {
+        "id": 2,
+        "type": "cat",
+        "price": 124.99
+    },
+    {
+        "id": 3,
+        "type": "fish",
+        "price": 0.99
+    }
+]
+
+
+POST : https://vur3ednzag.execute-api.ap-south-1.amazonaws.com/prod/pets/
+
+Input :
+-------
+{
+    "type" : "cat",
+    "price" : 123.11
+}
+
+-----------------------------------------------------------------------------------------------------			String endpointUrl = "https://vur3ednzag.execute-api.ap-south-1.amazonaws.com/prod/pets/1";
+
+		RestTemplate rt = new RestTemplate();
+
+		ResponseEntity<String> responseEntity = rt.getForEntity(endpointUrl, String.class);
+
+		int statusCodeValue = responseEntity.getStatusCodeValue();
+		if (statusCodeValue == 200) {
+			String body = responseEntity.getBody();
+			System.out.println(body);
+		}
+
+------------------------------------------------------------------------------------------------------
+@Data
+public class Pet {
+
+	private Integer id;
+	private String type;
+	private Double price;
+
+}
+-----------------------------------------------------------------------------------------------------
+
+@Service
+public class PetService {
+
+	public void getAllPets() {
+		String url = "https://vur3ednzag.execute-api.ap-south-1.amazonaws.com/prod/pets/";
+
+		RestTemplate rt = new RestTemplate();
+		ResponseEntity<Pet[]> responseEntity = rt.getForEntity(url, Pet[].class);
+		Pet[] body = responseEntity.getBody();
+		for (Pet pet : body) {
+			System.out.println(pet);
+		}
+	}
+
+	public void getPetById(Integer petId) {
+		String url = "https://vur3ednzag.execute-api.ap-south-1.amazonaws.com/prod/pets/{petId}";
+
+		RestTemplate rt = new RestTemplate();
+		ResponseEntity<Pet> forEntity = rt.getForEntity(url, Pet.class, petId);
+		System.out.println(forEntity.getBody());
+
+	}
+
+	public void addPet() {
+		String url = "https://vur3ednzag.execute-api.ap-south-1.amazonaws.com/prod/pets/";
+
+		RestTemplate rt = new RestTemplate();
+		
+		Pet pet = new Pet();
+		pet.setId(4);
+		pet.setType("Parrot");
+		pet.setPrice(45.90);
+		
+		ResponseEntity<String> postForEntity = rt.postForEntity(url, pet, String.class);
+		System.out.println(postForEntity.getBody());
+
+	}
+}
+------------------------------------------------------------------------------------------------------
+
+Develop Client Application For IRCTC REST api
+
+You can understand api details using below Swagger Documentation URL
+
+https://ashokit-app-irctc.herokuapp.com/swagger-ui.html#/
+
+--------------------------------------------------------------------------------------------------------
+

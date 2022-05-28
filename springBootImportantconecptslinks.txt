@@ -1,0 +1,45 @@
+Spring Boot Actuators : https://youtu.be/lMDZ6dple9Q
+
+ Spring Boot Profiles : https://youtu.be/I8r858beW0o
+
+Spring Boot with Security -
+Part-1 : https://youtu.be/p-nxpoHXhp8
+Part-2 : https://youtu.be/vNZ5H7zm3us
+Part-3 (JWT) : https://youtu.be/J-g0FYPHY-k
+
+Spring Boot with Mongo DB 
+Part-01 : https://youtu.be/3qz8dRABscs
+Part-02 : https://youtu.be/JzAPqmnaKco
+Part-03 : https://youtu.be/kZOpf7kDiU8
+
+JUnit-5 with Mocking 
+https://youtu.be/MEFoGR07qgw
+
+ Docker : https://www.youtube.com/watch?v=VO818de8sdk
+
+Apache Kafka : https://youtu.be/VInk1_9vvCY
+
+ Spring Boot + AWS : https://youtu.be/PkZzHtSFMa0
+
+Git Hub Repository
++++++++++++++++++++
+ https://github.com/ashokitschool/ashokit_weekend_workshops
+
+
+Last one week classes backup videos
+
+MS Mini Project Part-1 : https://youtu.be/wTmhEL06n7s
+
+MS Mini Project Part-2 : https://youtu.be/4pCX0CCbNrQ
+
+Microservices Load Balancing : https://youtu.be/nv7R_a8SMJ4
+
+Spring Boot + Multi DB Config : https://youtu.be/Y7YNSUJ22dQ
+
+Code Review with Sonar : https://youtu.be/3hoqDyIOqF0
+
+Redis Cache Part-1 : https://youtu.be/68RGGr4Pz60
+
+Redis Cache Part-2 : https://youtu.be/2Sr6uI0mXqA
+
+JMETER : https://youtu.be/JRwy152cNic

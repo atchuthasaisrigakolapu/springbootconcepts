@@ -1,0 +1,66 @@
+@Service
+public class MakeMyTripService {
+
+	public void bookTicket() {
+
+		String apiUrl = "https://ashokit-app-irctc.herokuapp.com/ticket";
+
+		Passenger passenger = new Passenger();
+		passenger.setName("Ashok");
+		passenger.setEmail("ashok@gmail.com");
+		passenger.setFrom("Hyd");
+		passenger.setTo("Delhi");
+		passenger.setTrainNum(12334);
+		passenger.setJdate("20-May-2022");
+		
+		WebClient client = WebClient.create();
+		
+
+		Ticket ticket = client.post()
+							  .uri(apiUrl)
+							  .bodyValue(passenger)
+							  .retrieve()
+							  .bodyToMono(Ticket.class)
+							  .block();
+			  
+		System.out.println(ticket);
+	}
+
+	public void getTicket() {
+		String apiUrl = "https://ashokit-app-irctc.herokuapp.com/ticket/fe7ab624d00f47a68cbe54d8369b9471";
+		
+		WebClient client = WebClient.create();
+		
+		Ticket ticket = client.get()
+							  .uri(apiUrl)
+							  .retrieve()
+							  .bodyToMono(Ticket.class)
+							  .block();
+		
+		System.out.println(ticket);
+	}
+
+public void getTicketASync() {
+		String apiUrl = "https://ashokit-app-irctc.herokuapp.com/ticket/fe7ab624d00f47a68cbe54d8369b9471";
+		
+		WebClient client = WebClient.create();
+		
+		client.get()
+			  .uri(apiUrl)
+			  .retrieve()
+			  .bodyToMono(Ticket.class)
+			  .subscribe(MakeMyTripService::ticketRespHandler);
+		
+		System.out.println("Logic executing after sending request.....");
+		
+	}
+	
+	public static void ticketRespHandler(Ticket ticket) {
+		System.out.println("Response Recieved from api.....");
+		System.out.println(ticket);
+	}
+
+}
+
+
+=================================================================================================================

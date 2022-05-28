@@ -1,0 +1,59 @@
+XML and JAX-B
+JSON and Jackson
+HTTP Protocol
+HTTP Methods (GET, POST, PUT and DELETE)
+HTTP Status Codes (1xx, 2xx, 3xx, 4xx and 5xx)
+Http Request
+HTTP Response
+Request Header & Request Body
+Response Header & Response Body
+----------------------------------------------------------------------------------
+Building First REST API using Spring Boot
+---------------------------------------------------------------------------------------------
+
+1) Create Spring Starter Application with below dependencies
+	
+		- spring-boot-starter-web
+		- spring-boot-devtools
+
+2) Create RestController class using @RestController annotation
+
+3) Write methods in RestController and bind them to HTTP Protocol method
+
+4) Run the application and test it 
+
+Note: To test REST API functionality we will use POSTMAN software
+      (We can add postman plugin to chrome browser)
+
+----------------------------------------------------------------------------------------------
+@RestController
+public class WelcomeRestController {
+
+	@GetMapping("/welcome")
+	public String getWelcomeMsg() {
+		return "Welcome to REST APIs Development";
+	}
+
+	@GetMapping("/wish")
+	public ResponseEntity<String> getWishMsg() {
+		String msg = "Good Morning..!!";
+		return new ResponseEntity<>(msg, HttpStatus.OK);
+	}
+
+}
+----------------------------------------------------------------------------------------------
+
+-> ResponseEntity is a predefined class available in Spring Web MVC
+
+-> Using ResponseEntity class we can construct Response with body and status code
+
+		new ResponseEntity<>(body, HttpStatus);
+
+----------------------------------------------------------------------------------------------
+
+Note: REST API Methods should have Unique URL Patterns otherwise we will get ambiguity probelm
+      We need to make sure our methods should be identified uniquely
+
+-----------------------------------------------------------------------------------------------
+
+
